@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server/dist/app.js"
+    "start": "node server/dist/app.js -w"
   },
   "repository": {
     "type": "git",
@@ -19,6 +19,7 @@
   "homepage": "https://github.com/HBMattoon/typescript_playground#readme",
   "dependencies": {
     "@types/node": "^12.12.7",
+    "discord.js": "^11.5.1",
     "express": "^4.17.1"
   }
 }
