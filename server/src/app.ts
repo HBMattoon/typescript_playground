@@ -53,7 +53,7 @@ client.on('message', (msg:any) => {
   //   msg.reply(`Hi ${msg.author.username}!`);
   // }
   //check to see if message is a command
-  addToHist(msg);
+
   if(msg.content[0] === '!' && msg.content[1] !== undefined){
     //the msg is a command
     console.log('getting command')
@@ -62,11 +62,16 @@ client.on('message', (msg:any) => {
     let msgTarget:string | null | undefined = msg.content.split(' ')[1];
     if(msgCmd === '!hist'){
       if(msgTarget){
-        getHist((data:any) => msg.reply(data), msgTarget);
+        getHist((data:string[]) => {
+          //console.log(data)
+          msg.reply(data);
+        }, msgTarget);
       } else {
-        getHist((data:any) => msg.reply(data));
+        getHist((data:string[]) => msg.reply(data)); //data
       }
     }
+  } else {
+    addToHist(msg);
   }
 });
 
@@ -76,20 +81,31 @@ const addToHist = (msg:object) => {
 
 const getHist = (cb:Function, target?:string) => {
 
-  if( target ){
-    let targetHist: any[] = []
-    msgHist.forEach((item:any)=>{
-      if(item.author.username){
-        targetHist.push(item);
-      }
-    })
-    cb(targetHist)
+
+  console.log('getting hist for: ', target)
+  let targetHist: any[] = []
+  targetHist.push(`Showing hist for [${target}]`);
+  msgHist.forEach((item:any)=>{
+    if(target ? item.author.username === target : true){
+      let entry:string = `[${formatDate(item.createdAt)}] [${item.author.username}]: ${item.content}`;
+      targetHist.push(entry);
+    }
+  })
+  cb(targetHist)
+}
 
 
 
-  } else {
-    console.log('TODO');
-  }
+
+const formatDate = (input:Date):string => {
+
+  let month:Number = input.getMonth();
+  let day:Number = input.getDate();
+  let year:string = JSON.stringify(input.getFullYear()).slice(1)
+  let timeNoSec:string = `${input.getHours()}:${('0'+input.getMinutes()).slice(1)}`
+  let result:string = `${month}/${day}/${year}, ${timeNoSec}`;
+
+  return result;
 }
 
 client.login(key.token);
